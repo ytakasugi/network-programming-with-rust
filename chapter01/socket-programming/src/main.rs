@@ -24,10 +24,10 @@ fn main() {
     match protocol {
         "tcp" => match role {
             "server" => {
-                todo!()
+                tcp_server::serve(address).unwrap_or_else(|e| error!("{}", e));
             }
             "client" => {
-                todo!()
+                tcp_client::connect(address).unwrap_or_else(|e| error!("{}", e));
             }
             _ => {
                 missing_role();
