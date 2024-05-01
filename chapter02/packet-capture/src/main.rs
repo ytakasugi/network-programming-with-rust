@@ -43,6 +43,21 @@ fn main() {
         Err(e) => panic!("Failed to create datalink channel {}", e),
     };
 
+    // 1. イーサネットフレームを構築
+    // 2. IPv4パケットを構築
+    // 3. TCP/UDPパケットを構築
+    // 4. アプリケーション層の情報を表示
+    // 
+    // パケットの構造
+    // --------------------
+    // | イーサネットヘッダ |
+    // |-------------------|
+    // | IPヘッダ          |
+    // |-------------------|
+    // | TCP/UDPヘッダ     |
+    // |-------------------|
+    // | データ(ペイロード) |
+    // ---------------------
     loop {
         match rx.next() {
             Ok(frame) => {
@@ -67,7 +82,7 @@ fn main() {
     }
 }
 
-/// Pv4パケットを構築し次のレイヤのハンドラを呼び出す
+/// IPv4パケットを構築し、ペイロードから次のレイヤのハンドラを呼び出す
 fn ipv4_handler(ethernet: &EthernetPacket) {
     if let Some(packet) = Ipv4Packet::new(ethernet.payload()) {
         match packet.get_next_level_protocol() {
@@ -84,7 +99,7 @@ fn ipv4_handler(ethernet: &EthernetPacket) {
     }
 }
 
-/// IPv6パケットを構築し次のレイヤのハンドラを呼び出す
+/// IPv6パケットを構築し、ペイロードから次のレイヤのハンドラを呼び出す
 fn ipv6_handler(ethernet: &EthernetPacket) {
     if let Some(packet) = Ipv6Packet::new(ethernet.payload()) {
         match packet.get_next_header() {
